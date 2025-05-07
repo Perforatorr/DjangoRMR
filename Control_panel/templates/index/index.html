@@ -1,0 +1,66 @@
+<!-- templates/posts/index.html -->
+ 
+
+<!DOCTYPE html> 
+<html lang="ru">
+  <head>
+    {% load static %}
+    <!-- <img src="{% static 'img/logo.png' %}"  style="width: 400px; height: auto;"> -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> 
+    
+    <title>Control Panel</title>
+  </head>
+  <body>
+     <!-- Использованы классы бустрапа для создания типовой навигации с логотипом -->
+      <!-- В дальнейшем тут будет создано полноценное меню -->
+    <header>
+      {% include 'includes/header.html' %}   
+    </header>
+    <style>
+      .rounded-rectangle {
+          background-color:rgb(38, 82, 146);
+          border-radius: 15px;
+          padding: 20px;
+          
+          width: 90%;
+          height: 300px; 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: rgb(232, 65, 76);
+          font-size: 20px;
+          margin-top: 20px;
+          justify-content: center; /* Центрируем содержимое по горизонтали */
+          align-items: center;          
+      }
+      .rounded-rectangle:hover {
+            background-color: rgb(248, 232, 233); /* Цвет при наведении */
+        }
+      .rectangles-container {
+          padding-left: 9%;
+          padding-right: 1%;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          
+      }
+      .rectangle-text {
+    font-size: 84px; /* Размер шрифта (можно изменить по желанию) */
+    color:rgb(232, 65, 76); /* Цвет текста */
+    
+    text-align: center;
+    box-sizing: border-box; 
+     /* Центрирует текст внутри элемента */
+}
+  </style>
+</head>
+<body>
+  <div class="rectangles-container" >
+    {% for i in rect %}
+        <a class="rounded-rectangle" href="{% url 'Block_panel:change_condition' slug=i.slug%}" style="text-decoration: none; "> <b class = "rectangle-text">{{ i.machine.name }}<br></b><b style="text-decoration: none;" font-size: 34px;>{{ i.condition.name }}</b></a>
+      
+    {% endfor %}
+</div>
+  </body>
+
+</html> 
