@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления</title>
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/Roboto.css' %}">
+    <style>
+        .machine-card {
+            width: 300px;
+            height: 200px;
+            border: 4px solid;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        .machine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .machine-name {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+        }
+        .status-0 { border-color: rgb(1, 174, 84); } /* Зеленый */
+        .status-other { border-color: rgb(227, 20, 62); } /* Красный */
+        .navbar-logo { height: 50px; }
+        .user-info { display: flex; align-items: center; }
+        .user-name { margin-right: 15px; }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body style="font-family: Roboto, sans-serif; background: rgb(238,239,241);">
+    <!-- Шапка -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'assets/img/logo.png' %}" alt="Логотип" class="navbar-logo">
+            </a>
+            
+            <div class="user-info">
+                <span class="user-name">{{ request.session.user_name }}</span>
+                <a href= # class="btn btn-outline-danger">Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container mt-4">
+        <!-- <h2 class="text-center mb-4">Состояние оборудования</h2> -->
+        
+        <div class="grid-container">
+            {% for machine in machines %}
+            <div class="machine-card {% if machine.condition.id == 0 %}status-0{% else %}status-other{% endif %}">
+                <div class="machine-name">{{ machine.name }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{% static 'assets/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
