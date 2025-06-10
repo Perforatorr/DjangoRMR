@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменение состояния: {{ machine.name }}</title>
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/Roboto.css' %}">
+    <style>
+        .condition-card {
+            width: 280px;
+            height: 180px;
+            border: 4px solid;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background-color: white;
+        }
+        .condition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px;
+        }
+        .condition-card:active {
+            transform: translateY(2px);
+        }
+        .condition-name {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            z-index: 2;
+        }
+        .condition-0 { 
+            border-color: rgb(1, 174, 84); /* Зеленый */
+            background-color: rgb(255, 255, 255); /* Легкий зеленый фон */
+        }
+        .condition-other { 
+            border-color: rgb(227, 20, 62); /* Бордовый */
+            background-color: rgb(255, 255, 255); /* Легкий бордовый фон */
+        }
+
+        .current-condition {
+            background-color: rgba(1, 174, 84, 0.5) !important;
+            border-color: rgb(1, 174, 84) !important; /* Добавляем зелёную рамку */
+        }
+
+        .current-condition-other {
+            background-color: rgba(227, 20, 62, 0.5) !important;
+            border-color: rgb(227, 20, 62) !important; /* Добавляем бордовую рамку */
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+        .navbar-logo { height: 50px; }
+        .user-info { display: flex; align-items: center; }
+        .user-name { margin-right: 15px; }
+        .machine-title {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 10px;
+            background-color: rgba(0,88,162,0.1);
+            border-radius: 8px;
+        }
+        .back-button {
+            margin-right: 15px;
+        }
+        
+        /* Адаптивные стили */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 10px;
+                padding: 10px;
+            }
+            .condition-card {
+                width: 100%;
+                max-width: 260px;
+                height: 160px;
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body style="font-family: Roboto, sans-serif; background: rgb(238,239,241);">
+    <!-- Шапка -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'panel' %}">
+                <img src="{% static 'assets/img/logo.png' %}" alt="Логотип" class="navbar-logo">
+            </a>
+            
+            <div class="user-info">
+                <span class="user-name">{{ request.session.user_name }}</span>
+                <a href=/logout class="btn btn-outline-danger btn-sm">Выйти</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        </div>
+        
+        <div class="machine-title">
+            <h4>{{ machine.name }}</h4>
+        </div>
+        
+        <form method="post" id="conditionForm">
+            {% csrf_token %}
+            <input type="hidden" name="new_condition_id" id="newConditionId">
+        </form>
+        
+        <div class="grid-container">
+            {% for condition in conditions %}
+            <div class="condition-card 
+                {% if condition.id == machine.condition.id %}
+                    {% if condition.id == 0 %}current-condition{% else %}current-condition-other{% endif %}
+                {% else %}
+                    {% if condition.id == 0 %}condition-0{% else %}condition-other{% endif %}
+                {% endif %}"
+                onclick="selectCondition('{{ condition.id }}', '{{condition.id }}'== '{{machine.condition.id }}')">
+            <div class="condition-name">{{ condition.name }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function selectCondition(conditionId, isCurrent) {
+            if (isCurrent) {
+                alert("Это состояние уже установлено!");
+                return;
+            }
+            
+            if (confirm("Вы уверены, что хотите изменить состояние на '" + 
+                        document.querySelector(`[onclick*="${conditionId}"] .condition-name`).textContent + "'?")) {
+                document.getElementById('newConditionId').value = conditionId;
+                document.getElementById('conditionForm').submit();
+            }
+        }
+    </script>
+</body>
+</html>
